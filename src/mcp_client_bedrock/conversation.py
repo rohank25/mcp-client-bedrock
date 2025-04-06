@@ -1,12 +1,13 @@
 from pydantic import BaseModel, PrivateAttr
 from typing import List, Optional, Dict
 import boto3
+from mcp_client_bedrock.tools import BedrockToolManager
 
 class Conversation(BaseModel):
     _client: boto3.client = PrivateAttr()
     _model: Optional[str] = PrivateAttr(default="us.anthropic.claude-3-5-sonnet-20241022-v2:0")
     _message_history: Optional[List] = PrivateAttr(default_factory=list)
-    _tools: Optional[List] = PrivateAttr(default_factory=list)
+    _tools: BedrockToolManager = PrivateAttr(default_factory=BedrockToolManager)
     _system_prompt: Optional[str] = PrivateAttr(
         default=[{
             "text": """
@@ -57,7 +58,11 @@ class Conversation(BaseModel):
             },
             additionalModelRequestFields={
                 "top_k": self._model_top_k
-            }
+            },
+            toolConfig = self.tools()
         )
         self.update_message_history = response["output"]["message"]
+        print(f"------- SYSTEM RESPONSE TYPE: {response["stopReason"]}")
+
+
         return response["output"]["message"]["content"][0]["text"]
