@@ -3,12 +3,15 @@ import os
 import boto3
 import traceback
 from mcp_client_bedrock.conversation import Conversation
+from mcp_client_bedrock.tools import BedrockToolManager
+from typing import Dict
 
 
 class ChatClient(BaseModel):
     aws_profile: str = Field(default_factory=lambda: os.getenv, env="AWS_PROFILE")
     aws_region: str = Field(default_factory=lambda: os.getenv, env="AWS_REGION")
     model_name: str = Field(default_factory=lambda: os.getenv, env="MODEL_ID")
+    tools: BedrockToolManager = Field(default_factory=BedrockToolManager)
     _client: boto3.client = PrivateAttr(default=None)
     _conversation: Conversation = PrivateAttr(default=None)
     
@@ -20,6 +23,8 @@ class ChatClient(BaseModel):
             client=self._client,
             model=self.model_name
         )
+
+        self._conversation.tools = self.tools
 
     def send_message(self, message: str) -> str:
         if not self._client:

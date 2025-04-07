@@ -1,4 +1,3 @@
-# server.py
 from mcp.server.fastmcp import FastMCP
 
 # Create an MCP server
@@ -9,5 +8,8 @@ def add_two_numbers(a: int, b: int) -> int:
     """Add two numbers"""
     return a + b
 
-if __name__ == "__main__":
+def main():
     mcp.run()
+
+if __name__ == "__main__":
+    main()

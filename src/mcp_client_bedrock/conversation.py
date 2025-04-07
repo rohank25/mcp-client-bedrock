@@ -49,6 +49,8 @@ class Conversation(BaseModel):
                 'text': message
             }]
         }
+        # print(f"------- SYSTEM MESSAGE HISTORY: {self.message_history}")
+
         response = self._client.converse(
             modelId = self._model,
             messages = self._message_history,
@@ -59,10 +61,9 @@ class Conversation(BaseModel):
             additionalModelRequestFields={
                 "top_k": self._model_top_k
             },
-            toolConfig = self.tools()
+            toolConfig = self.tools.tools
         )
         self.update_message_history = response["output"]["message"]
+        # print(f"------- SYSTEM MESSAGE HISTORY: {self.message_history}")
         print(f"------- SYSTEM RESPONSE TYPE: {response["stopReason"]}")
-
-
         return response["output"]["message"]["content"][0]["text"]

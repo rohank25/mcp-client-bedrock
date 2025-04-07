@@ -20,3 +20,4 @@ build-backend = "hatchling.build"
 
 [project.scripts]
 mcp-client-bedrock = "mcp_client_bedrock:main"
+mcp-test-server = "mcp_client_bedrock.test_server.server:main"
