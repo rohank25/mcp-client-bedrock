@@ -31,14 +31,19 @@ class ChatClient(BaseModel):
             raise ValueError("Agent is not initialized. Ensure the Bedrock client and model are properly set up.")
         try:
             response = self._conversation.invoke(message)
-            return response
+
+            if response['stopReason'] is "end_turn":
+                return response
+            elif response['stopReason'] is "tool_use":
+                pass
+            else:
+                print(f"------- SYSTEM ERROR: Unexpected stop reason: {response['stopReason']}")
         except Exception as e:
             print(f"------- SYSTEM ERROR: {e}")
             traceback.print_exc()
             raise
 
     def start(self) -> None:
-        # Simulate sending a message to the chat model and receiving a response
         print("Starting Chat session...")
         while True: 
             user_input = input("You: ")
